@@ -129,6 +129,34 @@ func (s *Streamdal) GetPipelineFilter(filters []*Filter) (map[string]interface{}
 	return pipelines[0], diags
 }
 
+func (s *Streamdal) CreateNotification(ctx context.Context, req *protos.CreateNotificationRequest) (*protos.CreateNotificationResponse, error) {
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	return s.Client.CreateNotification(ctx, req)
+}
+
+func (s *Streamdal) UpdateNotification(ctx context.Context, req *protos.UpdateNotificationRequest) (*protos.StandardResponse, error) {
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	return s.Client.UpdateNotification(ctx, req)
+}
+
+func (s *Streamdal) DeleteNotification(ctx context.Context, req *protos.DeleteNotificationRequest) (*protos.StandardResponse, error) {
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	return s.Client.DeleteNotification(ctx, req)
+}
+
+func (s *Streamdal) GetNotification(ctx context.Context, req *protos.GetNotificationRequest) (*protos.GetNotificationResponse, error) {
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	return s.Client.GetNotification(ctx, req)
+}
+
 func (s *Streamdal) GetNotificationConfigFilter(filters []*Filter) (map[string]interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 

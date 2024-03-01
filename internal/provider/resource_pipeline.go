@@ -252,7 +252,7 @@ func getStepSchema() *schema.Resource {
 								},
 							},
 						},
-						"mask": {
+						"mask_value": {
 							Description: "Mask value",
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -428,14 +428,14 @@ func resourcePipelineRead(ctx context.Context, d *schema.ResourceData, m interfa
 func resourcePipelineCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	pc := m.(*streamdal.Streamdal)
+	client := m.(*streamdal.Streamdal)
 
 	pipeline, moreDiags := buildPipeline(d)
 	if moreDiags.HasError() {
 		return append(diags, moreDiags...)
 	}
 
-	resp, err := pc.CreatePipeline(ctx, &protos.CreatePipelineRequest{
+	resp, err := client.CreatePipeline(ctx, &protos.CreatePipelineRequest{
 		Pipeline: pipeline,
 	})
 	if err != nil {
@@ -800,7 +800,7 @@ func generateStepTransform(s *protos.PipelineStep, stepMap map[string]interface{
 			},
 		}
 	case steps.TransformType_TRANSFORM_TYPE_MASK_VALUE:
-		maskData, ok := config["mask"].([]interface{})
+		maskData, ok := config["mask_value"].([]interface{})
 		if !ok || len(maskData) == 0 {
 			return diag.Errorf("Error generating transform mask step: mask value config not found")
 		}

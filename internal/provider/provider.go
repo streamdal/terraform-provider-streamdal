@@ -48,7 +48,8 @@ func New(version, apiToken string) func() *schema.Provider {
 				},
 			},
 			ResourcesMap: map[string]*schema.Resource{
-				"streamdal_pipeline": resourcePipeline(),
+				"streamdal_pipeline":     resourcePipeline(),
+				"streamdal_notification": resourceNotification(),
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"streamdal_pipeline":     dataSourcePipeline(),
@@ -115,15 +116,4 @@ func buildFiltersDataSource(set *schema.Set) []*streamdal.Filter {
 		})
 	}
 	return filters
-}
-
-// getTransformType is a convenience function to return the transform type we are operating on
-func getTransformType(d *schema.ResourceData) string {
-	for _, t := range types {
-		if opts, ok := d.Get(t).([]interface{}); ok && len(opts) > 0 {
-			return t
-		}
-	}
-
-	return ""
 }

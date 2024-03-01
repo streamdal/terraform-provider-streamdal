@@ -246,7 +246,7 @@ github.com/posener/complete/cmd/install
 # github.com/russross/blackfriday v1.6.0
 ## explicit; go 1.13
 github.com/russross/blackfriday
-# github.com/streamdal/streamdal/libs/protos v0.1.29
+# github.com/streamdal/streamdal/libs/protos v0.1.30
 ## explicit; go 1.20
 github.com/streamdal/streamdal/libs/protos/build/go/protos
 github.com/streamdal/streamdal/libs/protos/build/go/protos/shared

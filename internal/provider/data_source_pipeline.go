@@ -21,7 +21,7 @@ func dataSourcePipeline() *schema.Resource {
 				Computed:    true,
 			},
 			"name": {
-				Description: "Pipeline name",
+				Description: "Pipeline Name",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -33,7 +33,7 @@ func dataSourcePipelineRead(_ context.Context, d *schema.ResourceData, m interfa
 	var diags diag.Diagnostics
 	var filters []*streamdal.Filter
 
-	s := m.(*streamdal.Streamdal)
+	client := m.(*streamdal.Streamdal)
 
 	if v, ok := d.GetOk("filter"); ok {
 		filters = buildFiltersDataSource(v.(*schema.Set))
@@ -45,7 +45,7 @@ func dataSourcePipelineRead(_ context.Context, d *schema.ResourceData, m interfa
 		})
 	}
 
-	pipeline, moreDiags := s.GetPipelineFilter(filters)
+	pipeline, moreDiags := client.GetPipelineFilter(filters)
 	if moreDiags.HasError() {
 		return append(diags, moreDiags...)
 	}

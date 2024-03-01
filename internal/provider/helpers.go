@@ -327,3 +327,75 @@ func kvActionFromString(s string) (shared.KVAction, error) {
 
 	return 0, errors.New("invalid kv action")
 }
+
+func getNotificationConfigTypes() schema.SchemaValidateFunc {
+	t := make([]string, 0)
+
+	for _, v := range protos.NotificationType_name {
+		v = strings.Replace(v, "NOTIFICATION_TYPE_", "", -1)
+		v = strings.ToLower(v)
+		t = append(t, v)
+	}
+
+	return validation.StringInSlice(t, true)
+}
+
+func notificationConfigTypeFromString(s string) (protos.NotificationType, error) {
+	for id, v := range protos.NotificationType_name {
+		v = strings.Replace(v, "NOTIFICATION_TYPE_", "", -1)
+		v = strings.ToLower(v)
+		if s == v {
+			return protos.NotificationType(id), nil
+		}
+	}
+
+	return 0, errors.New("invalid notification type")
+}
+
+func getPagerDutyUrgencyTypes() schema.SchemaValidateFunc {
+	t := make([]string, 0)
+
+	for _, v := range protos.NotificationPagerDuty_Urgency_name {
+		v = strings.Replace(v, "URGENCY_", "", -1)
+		v = strings.ToLower(v)
+		t = append(t, v)
+	}
+
+	return validation.StringInSlice(t, true)
+}
+
+func pagerDutyUrgencyTypeFromString(s string) (protos.NotificationPagerDuty_Urgency, error) {
+	for id, v := range protos.NotificationPagerDuty_Urgency_name {
+		v = strings.Replace(v, "URGENCY_", "", -1)
+		v = strings.ToLower(v)
+		if s == v {
+			return protos.NotificationPagerDuty_Urgency(id), nil
+		}
+	}
+
+	return 0, errors.New("invalid pagerduty urgency type")
+}
+
+func getEmailTypes() schema.SchemaValidateFunc {
+	t := make([]string, 0)
+
+	for _, v := range protos.NotificationEmail_Type_name {
+		v = strings.Replace(v, "TYPE_", "", -1)
+		v = strings.ToLower(v)
+		t = append(t, v)
+	}
+
+	return validation.StringInSlice(t, true)
+}
+
+func emailTypeFromString(s string) (protos.NotificationEmail_Type, error) {
+	for id, v := range protos.NotificationEmail_Type_name {
+		v = strings.Replace(v, "TYPE_", "", -1)
+		v = strings.ToLower(v)
+		if s == v {
+			return protos.NotificationEmail_Type(id), nil
+		}
+	}
+
+	return 0, errors.New("invalid email type")
+}

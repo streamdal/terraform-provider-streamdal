@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.33.0
 	github.com/maxbrunsfeld/counterfeiter/v6 v6.4.1
 	github.com/minio/pkg v1.7.5
-	github.com/streamdal/streamdal/libs/protos v0.1.29
+	github.com/streamdal/streamdal/libs/protos v0.1.30
 	google.golang.org/grpc v1.62.0
 )
 
