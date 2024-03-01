@@ -97,7 +97,7 @@ func (s *Streamdal) GetPipelineFilter(filters []*Filter) (map[string]interface{}
 		return nil, diag.FromErr(err)
 	}
 
-	raw := make([]map[string]interface{}, 0)
+	raw := map[string]interface{}{}
 	if err := json.Unmarshal(respBytes, &raw); err != nil {
 		return nil, append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -127,4 +127,52 @@ func (s *Streamdal) GetPipelineFilter(filters []*Filter) (map[string]interface{}
 	}
 
 	return pipelines[0], diags
+}
+
+func (s *Streamdal) GetNotificationConfigFilter(filters []*Filter) (map[string]interface{}, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
+
+	resp, err := s.Client.GetNotifications(ctx, &protos.GetNotificationsRequest{})
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+
+	respBytes, err := json.Marshal(resp.GetNotifications())
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+
+	raw := map[string]interface{}{}
+	if err := json.Unmarshal(respBytes, &raw); err != nil {
+		return nil, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to parse response",
+			Detail:   err.Error(),
+		})
+	}
+
+	notificationCfgs, moreDiags := filterJSON(raw, filters)
+	if moreDiags.HasError() {
+		return nil, moreDiags
+	}
+
+	if len(notificationCfgs) < 1 {
+		// No notification config found using filter
+		return nil, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to find notification config",
+			Detail:   "Filters: " + filterString(filters),
+		})
+	} else if len(notificationCfgs) > 1 {
+		// Filter must find only one notification config
+		return nil, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Filter returned more than one notification config",
+		})
+	}
+
+	return notificationCfgs[0], diags
 }

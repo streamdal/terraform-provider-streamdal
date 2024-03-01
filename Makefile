@@ -18,4 +18,4 @@ build:
 install: build
 	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
 	mv ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
-	rm -Rf ./examples/.terraform  ./examples/.terraform.lock.hcl ./examples/terraform.tfstate ./examples/create_pipeline/terraform.tfstate ./examples/create_pipeline/.terraform ./examples/create_pipeline/.terraform.lock.hcl
+	rm -Rf ./examples/.terraform  ./examples/.terraform.lock.hcl ./examples/terraform.tfstate ./examples/**/terraform.tfstate ./examples/**/.terraform ./examples/**/.terraform.lock.hcl

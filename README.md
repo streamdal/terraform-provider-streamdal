@@ -1,2 +1,2 @@
-# Terraform Provider for the Steamdal eco system
+# Terraform Provider for the Steamdal ecosystem
 

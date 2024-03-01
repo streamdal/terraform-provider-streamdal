@@ -51,7 +51,8 @@ func New(version, apiToken string) func() *schema.Provider {
 				"streamdal_pipeline": resourcePipeline(),
 			},
 			DataSourcesMap: map[string]*schema.Resource{
-				"streamdal_pipeline": dataSourcePipeline(),
+				"streamdal_pipeline":     dataSourcePipeline(),
+				"streamdal_notification": dataSourceNotification(),
 			},
 		}
 

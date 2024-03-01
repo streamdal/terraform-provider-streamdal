@@ -3,20 +3,20 @@ package provider
 import (
 	"context"
 
+	"github.com/streamdal/terraform-provider-streamdal/streamdal"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
-	"github.com/streamdal/terraform-provider-streamdal/streamdal"
 )
 
-func dataSourcePipeline() *schema.Resource {
+func dataSourceNotification() *schema.Resource {
 	return &schema.Resource{
-		ReadContext:   dataSourcePipelineRead,
+		ReadContext:   dataSourceNotificationRead,
 		SchemaVersion: 1,
 		Schema: map[string]*schema.Schema{
 			"filter": dataSourceFiltersSchema(),
 			"id": {
-				Description: "Pipeline ID",
+				Description: "Notification Config ID",
 				Type:        schema.TypeString,
 				Computed:    true,
 			},
@@ -29,7 +29,7 @@ func dataSourcePipeline() *schema.Resource {
 	}
 }
 
-func dataSourcePipelineRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceNotificationRead(_ context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	var filters []*streamdal.Filter
 
@@ -45,13 +45,13 @@ func dataSourcePipelineRead(_ context.Context, d *schema.ResourceData, m interfa
 		})
 	}
 
-	pipeline, moreDiags := s.GetPipelineFilter(filters)
+	notificationCfg, moreDiags := s.GetNotificationConfigFilter(filters)
 	if moreDiags.HasError() {
 		return append(diags, moreDiags...)
 	}
 
-	d.SetId(pipeline["id"].(string))
-	_ = d.Set("name", pipeline["name"].(string))
+	d.SetId(notificationCfg["id"].(string))
+	_ = d.Set("name", notificationCfg["name"].(string))
 
 	return diags
 }
