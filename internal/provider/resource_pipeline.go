@@ -350,13 +350,13 @@ func getStepSchema() *schema.Resource {
 					},
 				},
 			},
-			"valid_json": {
-				Description: "Valid JSON Step",
-				Type:        schema.TypeList,
-				Optional:    true,
-				MaxItems:    1,
-				Elem:        &schema.Resource{},
-			},
+			//"valid_json": {
+			//	Description: "Valid JSON Step",
+			//	Type:        schema.TypeList,
+			//	Optional:    true,
+			//	MaxItems:    1,
+			//	Elem:        &schema.Resource{},
+			//},
 			"schema_validation": {
 				Description: "Schema Validation Step",
 				Type:        schema.TypeList,
