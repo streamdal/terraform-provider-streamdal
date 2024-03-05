@@ -283,12 +283,8 @@ func (s *Streamdal) CreateAudience(ctx context.Context, req *protos.CreateAudien
 	return s.Client.CreateAudience(ctx, req)
 }
 
-func (s *Streamdal) UpdateAudience(ctx context.Context, aud *protos.CreateAudienceRequest) (*protos.StandardResponse, error) {
+func (s *Streamdal) UpdateAudience(_ context.Context, _ *protos.CreateAudienceRequest) (*protos.StandardResponse, error) {
 	return nil, errors.New("unimplemented")
-	//md := metadata.New(map[string]string{"auth-token": s.Token})
-	//ctx = metadata.NewOutgoingContext(ctx, md)
-	//
-	//return s.Client.CreateAudience(ctx, req)
 }
 
 func (s *Streamdal) DeleteAudience(ctx context.Context, req *protos.DeleteAudienceRequest) (*protos.StandardResponse, error) {
