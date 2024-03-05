@@ -30,7 +30,7 @@ func dataSourcePipeline() *schema.Resource {
 				Type:        schema.TypeList,
 				Optional:    true,
 				ConfigMode:  schema.SchemaConfigModeBlock,
-				Elem:        getStepSchema(),
+				Elem:        stepSchema(),
 			},
 		},
 	}

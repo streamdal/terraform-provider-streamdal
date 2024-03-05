@@ -38,7 +38,14 @@ func resourcePipeline() *schema.Resource {
 				Type:        schema.TypeList,
 				Optional:    true,
 				ConfigMode:  schema.SchemaConfigModeBlock,
-				Elem:        getStepSchema(),
+				Elem:        stepSchema(),
+			},
+			"audience": {
+				Description: "Audience to attach to this pipeline",
+				Type:        schema.TypeList,
+				Optional:    true,
+				ConfigMode:  schema.SchemaConfigModeBlock,
+				Elem:        audienceSchema(),
 			},
 		},
 
@@ -49,71 +56,9 @@ func resourcePipeline() *schema.Resource {
 
 }
 
-// getConditionSchema returns the schema for a PipelineStepCondition message
-// This is used to define the schema for the on_true, on_false, and on_error fields of a PipelineStep
-func getConditionSchema() *schema.Resource {
-	return &schema.Resource{
-		Schema: map[string]*schema.Schema{
-			"abort": {
-				Description:  "Abort",
-				Type:         schema.TypeString,
-				Optional:     true,
-				Default:      "unset",
-				ValidateFunc: getAbortConditions(),
-			},
-			"metadata": {
-				Description: "Metadata",
-				Type:        schema.TypeMap,
-				Optional:    true,
-				Default:     map[string]interface{}{},
-			},
-			"notification": {
-				Description: "Notification Config",
-				Type:        schema.TypeList,
-				MaxItems:    1,
-				Optional:    true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"notification_config_ids": {
-							Description: "Notification Config IDs",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-							DefaultFunc: func() (interface{}, error) {
-								return []string{}, nil
-							},
-						},
-						"payload_type": {
-							Description:  "Payload Type",
-							Type:         schema.TypeString,
-							Optional:     true,
-							ValidateFunc: getNotificationPayloadTypes(),
-							Default:      "exclude",
-						},
-						"paths": {
-							Description: "Paths to Extract (If Payload Type is 'select_paths')",
-							Type:        schema.TypeList,
-							Optional:    true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-							DefaultFunc: func() (interface{}, error) {
-								return []string{}, nil
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-
-}
-
-// getStepSchema returns the schema for a PipelineStep message.
+// stepSchema returns the schema for a PipelineStep message.
 // This is in a separate method to try and keep the resourcePipeline method a bit cleaner
-func getStepSchema() *schema.Resource {
+func stepSchema() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -126,21 +71,21 @@ func getStepSchema() *schema.Resource {
 				Type:        schema.TypeList,
 				Optional:    true,
 				MaxItems:    1,
-				Elem:        getConditionSchema(),
+				Elem:        conditionSchema(),
 			},
 			"on_false": {
 				Description: "Determines the next action if the result of the step is false",
 				Type:        schema.TypeList,
 				Optional:    true,
 				MaxItems:    1,
-				Elem:        getConditionSchema(),
+				Elem:        conditionSchema(),
 			},
 			"on_error": {
 				Description: "Determines the next action if the result of the step is an error",
 				Type:        schema.TypeList,
 				Optional:    true,
 				MaxItems:    1,
-				Elem:        getConditionSchema(),
+				Elem:        conditionSchema(),
 			},
 			"dynamic": {
 				Description: "Should this step use the result from the previous step",

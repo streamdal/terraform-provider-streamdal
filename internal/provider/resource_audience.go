@@ -19,29 +19,7 @@ func resourceAudience() *schema.Resource {
 		UpdateContext: resourceAudienceUpdate,
 		DeleteContext: resourceAudienceDelete,
 
-		Schema: map[string]*schema.Schema{
-			"service_name": {
-				Description: "The name of the service",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"component_name": {
-				Description: "The name of the component",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"operation_name": {
-				Description: "The name of the operation",
-				Type:        schema.TypeString,
-				Required:    true,
-			},
-			"operation_type": {
-				Description:  "The type of the operation, either `consumer` or `producer`",
-				Type:         schema.TypeString,
-				Required:     true,
-				ValidateFunc: getAudienceOperationTypes(),
-			},
-		},
+		Schema: audienceSchema(),
 	}
 }
 
