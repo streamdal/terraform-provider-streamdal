@@ -2,8 +2,6 @@ module github.com/streamdal/terraform-provider-streamdal
 
 go 1.21
 
-toolchain go1.21.5
-
 require (
 	github.com/golang/protobuf v1.5.3
 	github.com/hashicorp/terraform-plugin-docs v0.6.0
