@@ -25,5 +25,6 @@ description: |-
 ### Optional
 
 - **id** (String) The ID of this resource.
+- **pipeline_ids** (List of String)
 
 

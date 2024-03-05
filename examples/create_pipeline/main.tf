@@ -82,5 +82,5 @@ resource "streamdal_audience" "testaud" {
   component_name = "kafka"
   operation_name = "read_stuff3"
   operation_type = "consumer"
-  pipeline_ids = [resource.streamdal_pipeline.mask_email.id]
+  pipeline_ids   = [resource.streamdal_pipeline.mask_email.id]
 }
