@@ -152,10 +152,6 @@ Required:
 <a id="nestedblock--step--transform"></a>
 ### Nested Schema for `step.transform`
 
-Required:
-
-- **type** (String) Transform Type
-
 Optional:
 
 - **delete_field** (Block List) Delete field (see [below for nested schema](#nestedblock--step--transform--delete_field))
