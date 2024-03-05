@@ -50,10 +50,12 @@ func New(version, apiToken string) func() *schema.Provider {
 			ResourcesMap: map[string]*schema.Resource{
 				"streamdal_pipeline":     resourcePipeline(),
 				"streamdal_notification": resourceNotification(),
+				"streamdal_audience":     resourceAudience(),
 			},
 			DataSourcesMap: map[string]*schema.Resource{
 				"streamdal_pipeline":     dataSourcePipeline(),
 				"streamdal_notification": dataSourceNotification(),
+				"streamdal_audience":     dataSourceAudience(),
 			},
 		}
 

@@ -160,7 +160,7 @@ Optional:
 
 - **delete_field** (Block List) Delete field (see [below for nested schema](#nestedblock--step--transform--delete_field))
 - **extract** (Block List) Extract value (see [below for nested schema](#nestedblock--step--transform--extract))
-- **mask** (Block List) Mask value (see [below for nested schema](#nestedblock--step--transform--mask))
+- **mask_value** (Block List) Mask value (see [below for nested schema](#nestedblock--step--transform--mask_value))
 - **obfuscate** (Block List) Obfuscate value (see [below for nested schema](#nestedblock--step--transform--obfuscate))
 - **replace_value** (Block List) Replace value of a field (see [below for nested schema](#nestedblock--step--transform--replace_value))
 - **truncate** (Block List) Truncate value (see [below for nested schema](#nestedblock--step--transform--truncate))
@@ -181,8 +181,8 @@ Optional:
 - **paths** (List of String) Paths
 
 
-<a id="nestedblock--step--transform--mask"></a>
-### Nested Schema for `step.transform.mask`
+<a id="nestedblock--step--transform--mask_value"></a>
+### Nested Schema for `step.transform.mask_value`
 
 Optional:
 

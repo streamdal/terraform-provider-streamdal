@@ -13,11 +13,9 @@ provider "streamdal" {
   connection_timeout = 10
 }
 
-resource "streamdal_notification" "slack_engineering" {
-  name = "Notify Slack Engineering"
-  type = "slack"
-  slack {
-    channel   = "engineering"
-    bot_token = "1234"
-  }
+resource "streamdal_audience" "testaud" {
+  service_name   = "test_service"
+  component_name = "kafka"
+  operation_name = "read_stuff3"
+  operation_type = "consumer"
 }

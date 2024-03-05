@@ -12,6 +12,9 @@ import (
 	"github.com/streamdal/streamdal/libs/protos/build/go/protos/steps"
 )
 
+const consumerStr = "consumer"
+const producerStr = "producer"
+
 // interfaceToStrings converts an interface{} value to []string
 // This is needed when a nested resource, say "kafka" has a value that is a schema.TypeList of schema.TypeString
 func interfaceToStrings(value interface{}) []string {
@@ -398,4 +401,25 @@ func emailTypeFromString(s string) (protos.NotificationEmail_Type, error) {
 	}
 
 	return 0, errors.New("invalid email type")
+}
+
+func getAudienceOperationTypes() schema.SchemaValidateFunc {
+	return validation.StringInSlice([]string{consumerStr, producerStr}, false)
+}
+func audienceOperationTypeFromString(s string) protos.OperationType {
+	switch s {
+	case consumerStr:
+		return protos.OperationType_OPERATION_TYPE_CONSUMER
+	default:
+		return protos.OperationType_OPERATION_TYPE_PRODUCER
+	}
+}
+
+func audienceOperationTypeToString(t protos.OperationType) string {
+	switch t {
+	case protos.OperationType_OPERATION_TYPE_CONSUMER:
+		return consumerStr
+	default:
+		return producerStr
+	}
 }

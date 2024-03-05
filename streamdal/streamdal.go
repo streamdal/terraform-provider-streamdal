@@ -3,6 +3,7 @@ package streamdal
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	"github.com/streamdal/streamdal/libs/protos/build/go/protos"
+	"github.com/streamdal/terraform-provider-streamdal/util"
 )
 
 type Streamdal struct {
@@ -203,4 +205,95 @@ func (s *Streamdal) GetNotificationConfigFilter(filters []*Filter) (map[string]i
 	}
 
 	return notificationCfgs[0], diags
+}
+
+func (s *Streamdal) GetAudienceFilter(filters []*Filter) (map[string]interface{}, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
+
+	resp, err := s.Client.GetAll(ctx, &protos.GetAllRequest{})
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+
+	respBytes, err := json.Marshal(resp.GetAudiences())
+	if err != nil {
+		return nil, diag.FromErr(err)
+	}
+
+	raw := map[string]interface{}{}
+	if err := json.Unmarshal(respBytes, &raw); err != nil {
+		return nil, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to parse response",
+			Detail:   err.Error(),
+		})
+	}
+
+	audiences, moreDiags := filterJSON(raw, filters)
+	if moreDiags.HasError() {
+		return nil, moreDiags
+	}
+
+	if len(audiences) < 1 {
+		// No audience found using filter
+		return nil, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Failed to find audience",
+			Detail:   "Filters: " + filterString(filters),
+		})
+	} else if len(audiences) > 1 {
+		// Filter must find only one audience
+		return nil, append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Filter returned more than one audience",
+		})
+	}
+
+	return audiences[0], diags
+}
+
+func (s *Streamdal) GetAudience(ctx context.Context, id string) (*protos.Audience, error) {
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	aud := util.AudienceFromStr(id)
+	if aud == nil {
+		return nil, errors.New("invalid audience id")
+	}
+
+	resp, err := s.Client.GetAll(ctx, &protos.GetAllRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	if util.AudienceInList(aud, resp.GetAudiences()) {
+		return aud, nil
+	}
+
+	return nil, errors.New("audience not found")
+}
+
+func (s *Streamdal) CreateAudience(ctx context.Context, req *protos.CreateAudienceRequest) (*protos.StandardResponse, error) {
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	return s.Client.CreateAudience(ctx, req)
+}
+
+func (s *Streamdal) UpdateAudience(ctx context.Context, aud *protos.CreateAudienceRequest) (*protos.StandardResponse, error) {
+	return nil, errors.New("unimplemented")
+	//md := metadata.New(map[string]string{"auth-token": s.Token})
+	//ctx = metadata.NewOutgoingContext(ctx, md)
+	//
+	//return s.Client.CreateAudience(ctx, req)
+}
+
+func (s *Streamdal) DeleteAudience(ctx context.Context, req *protos.DeleteAudienceRequest) (*protos.StandardResponse, error) {
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	return s.Client.DeleteAudience(ctx, req)
 }

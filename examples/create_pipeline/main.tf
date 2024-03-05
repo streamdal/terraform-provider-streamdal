@@ -19,29 +19,29 @@ resource "streamdal_pipeline" "detect_email" {
   step {
     name = "Detect Email Field"
     on_false {
-      abort="abort_current"
+      abort = "abort_current"
     }
     on_error {
-      abort="abort_all"
+      abort = "abort_all"
       notification {
         notification_config_ids = ["958a663a-561f-4463-acc7-d84ab2043c09"]
-        paths = ["object.payload"]
-        payload_type = "select_paths"
+        paths                   = ["object.payload"]
+        payload_type            = "select_paths"
       }
 
     }
-    dynamic=false
+    dynamic = false
     detective {
-      type = "pii_email"
-      args = [] # no args for this type
+      type   = "pii_email"
+      args   = [] # no args for this type
       negate = false
-      path = "object.payload"
+      path   = "object.payload"
     }
   }
 
   step {
-    name = "Replace Field Value Step"
-    dynamic=true
+    name    = "Replace Field Value Step"
+    dynamic = true
     transform {
       type = "mask_value" # TODO: can we eliminate this?
       mask_value {

@@ -21,9 +21,16 @@ func dataSourcePipeline() *schema.Resource {
 				Computed:    true,
 			},
 			"name": {
-				Description: "Pipeline Name",
+				Description: "Name",
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
+			},
+			"step": {
+				Description: "Steps for this pipeline",
+				Type:        schema.TypeList,
+				Optional:    true,
+				ConfigMode:  schema.SchemaConfigModeBlock,
+				Elem:        getStepSchema(),
 			},
 		},
 	}
