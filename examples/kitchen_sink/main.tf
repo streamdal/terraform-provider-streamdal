@@ -63,7 +63,6 @@ resource "streamdal_pipeline" "mask_email" {
     name    = "Mask Email Step"
     dynamic = true
     transform {
-      type = "mask_value" # TODO: can we eliminate this?
       mask_value {
         # No path needed since dynamic=true
         # We will use the results from the first detective step

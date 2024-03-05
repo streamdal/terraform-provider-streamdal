@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"strings"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -131,12 +132,6 @@ func stepSchema() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"type": {
-							Description:  "Transform Type",
-							Type:         schema.TypeString,
-							Required:     true,
-							ValidateFunc: getTransformTypes(),
-						},
 						"replace_value": {
 							Description: "Replace value of a field",
 							Type:        schema.TypeList,
@@ -434,8 +429,6 @@ func buildPipeline(d *schema.ResourceData) (*protos.Pipeline, diag.Diagnostics) 
 	for _, step := range pipelineSteps {
 		stepMap := step.(map[string]interface{})
 
-		//return nil, diag.Errorf("%#v", stepMap)
-
 		onTrue, diags := generateCondition(stepMap, "on_true")
 		if diags.HasError() {
 			return nil, diags
@@ -461,7 +454,9 @@ func buildPipeline(d *schema.ResourceData) (*protos.Pipeline, diag.Diagnostics) 
 
 		t := getStepType(stepMap)
 
-		generateStep(s, stepMap, t)
+		if moreDiags := generateStep(s, stepMap, t); moreDiags.HasError() {
+			return nil, append(diags, moreDiags...)
+		}
 
 		p.Steps = append(p.Steps, s)
 
@@ -682,10 +677,21 @@ func generateStepDetective(s *protos.PipelineStep, stepMap map[string]interface{
 }
 
 func generateStepTransform(s *protos.PipelineStep, stepMap map[string]interface{}) diag.Diagnostics {
+
 	stepData := stepMap["transform"].([]interface{})
 	config := stepData[0].(map[string]interface{})
 
-	t, err := transformTypeFromString(config["type"].(string))
+	// Loop over all elements under the transform{} block and see if we encounter
+	// a block with the name of a transform type. If we do, we know that's the
+	// transform type we're dealing with.
+	typeStr := getTransformType(config)
+	if typeStr == "" {
+		return diag.Errorf("no transform configuration found. "+
+			"You must specify at least one of the following: %s", strings.Join(getTransformTypes(), ","))
+	}
+
+	// Convert the above string to a protobuf enum
+	t, err := transformTypeFromString(typeStr)
 	if err != nil {
 		return diag.Errorf("Error generating transform step: %s", err)
 	}

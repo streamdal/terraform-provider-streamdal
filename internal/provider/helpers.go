@@ -74,6 +74,20 @@ func detectiveTypeFromString(s string) (steps.DetectiveType, error) {
 	return 0, errors.New("invalid detective type")
 }
 
+func getTransformType(d map[string]interface{}) string {
+	if d == nil {
+		return ""
+	}
+
+	for _, st := range getTransformTypes() {
+		if opts, ok := d[st].([]interface{}); ok && len(opts) > 0 {
+			return st
+		}
+	}
+
+	return ""
+}
+
 func transformTypeFromString(s string) (steps.TransformType, error) {
 	for id, v := range steps.TransformType_name {
 		v = strings.Replace(v, "TRANSFORM_TYPE_", "", -1)
@@ -101,7 +115,7 @@ func getDetectiveTypes() schema.SchemaValidateFunc {
 }
 
 // getDetectiveTypes returns all transform type enums as a slice of strings
-func getTransformTypes() schema.SchemaValidateFunc {
+func getTransformTypes() []string {
 	t := make([]string, 0)
 
 	for _, v := range steps.TransformType_name {
@@ -110,7 +124,7 @@ func getTransformTypes() schema.SchemaValidateFunc {
 		t = append(t, v)
 	}
 
-	return validation.StringInSlice(t, true)
+	return t
 }
 
 func getTransformTruncateTypes() schema.SchemaValidateFunc {
