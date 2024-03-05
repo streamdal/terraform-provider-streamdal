@@ -1,3 +1,7 @@
+# This example shows how to pre-create an audience in Streamdal
+# Normally audiences are announced by the SDK or shim when .Process() is called
+# However they can be created ahead of time in order to support creating and
+# assigning a pipeline to an audience before code is ran.
 terraform {
   required_providers {
     streamdal = {

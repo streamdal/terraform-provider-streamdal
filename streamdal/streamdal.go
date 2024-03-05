@@ -276,15 +276,42 @@ func (s *Streamdal) GetAudience(ctx context.Context, id string) (*protos.Audienc
 	return nil, errors.New("audience not found")
 }
 
+// GetPipelinesForAudience returns a list of pipeline IDs that are associated with the given audience.
+// Used for obtaining pipeline assignments for the audience resource
+func (s *Streamdal) GetPipelinesForAudience(ctx context.Context, aud *protos.Audience) ([]string, error) {
+	pipelineIDs := make([]string, 0)
+
+	resp, err := s.Client.GetAll(ctx, &protos.GetAllRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	for pipelineID, pipeline := range resp.GetPipelines() {
+		for _, audience := range pipeline.Audiences {
+			if util.AudienceEquals(aud, audience) {
+				pipelineIDs = append(pipelineIDs, pipelineID)
+			}
+		}
+	}
+
+	return pipelineIDs, nil
+}
+
+func (s *Streamdal) SetPipelines(ctx context.Context, aud *protos.Audience, pipelineIDs []string) (*protos.StandardResponse, error) {
+	md := metadata.New(map[string]string{"auth-token": s.Token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	return s.Client.SetPipelines(ctx, &protos.SetPipelinesRequest{
+		Audience:    aud,
+		PipelineIds: pipelineIDs,
+	})
+}
+
 func (s *Streamdal) CreateAudience(ctx context.Context, req *protos.CreateAudienceRequest) (*protos.StandardResponse, error) {
 	md := metadata.New(map[string]string{"auth-token": s.Token})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	return s.Client.CreateAudience(ctx, req)
-}
-
-func (s *Streamdal) UpdateAudience(_ context.Context, _ *protos.CreateAudienceRequest) (*protos.StandardResponse, error) {
-	return nil, errors.New("unimplemented")
 }
 
 func (s *Streamdal) DeleteAudience(ctx context.Context, req *protos.DeleteAudienceRequest) (*protos.StandardResponse, error) {

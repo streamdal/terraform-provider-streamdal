@@ -1,3 +1,4 @@
+# This example shows how to create a multi-step pipeline and assign it to an audience.
 terraform {
   required_providers {
     streamdal = {
@@ -13,7 +14,27 @@ provider "streamdal" {
   connection_timeout = 10
 }
 
-resource "streamdal_pipeline" "detect_email" {
+# Create a notification config which notifies a slack channel
+# Note: It's obviously not good practice to include bot tokens in your terraform files,
+#       this is just for demonstration purposes.
+resource "streamdal_notification" "slack_engineering" {
+  name = "Notify Slack Engineering"
+  type = "slack"
+  slack {
+    channel   = "engineering"
+    bot_token = "xoxb-abc1234"
+  }
+}
+
+output "notification_id" {
+  value = resource.streamdal_notification.slack_engineering.id
+}
+
+# Create a pipeline with two steps
+# The first step detects email fields and the second step masks the email field
+# If no email addresses are detected in the payload, further processing is aborted
+# If an error occurs, the pipeline is aborted and a notification is sent which includes the value of the payload
+resource "streamdal_pipeline" "mask_email" {
   name = "Mask Email"
 
   step {
@@ -24,30 +45,42 @@ resource "streamdal_pipeline" "detect_email" {
     on_error {
       abort = "abort_all"
       notification {
-        notification_config_ids = ["958a663a-561f-4463-acc7-d84ab2043c09"]
-        paths                   = ["object.payload"]
-        payload_type            = "select_paths"
+        notification_config_ids = [resource.streamdal_notification.slack_engineering.id]
+        paths                   = []
+        payload_type            = "full_payload"
       }
-
     }
     dynamic = false
     detective {
       type   = "pii_email"
       args   = [] # no args for this type
       negate = false
-      path   = "object.payload"
+      path   = "" # No path, we will scan the entire payload
     }
   }
 
   step {
-    name    = "Replace Field Value Step"
+    name    = "Mask Email Step"
     dynamic = true
     transform {
       type = "mask_value" # TODO: can we eliminate this?
       mask_value {
-        path = "email"
+        # No path needed since dynamic=true
+        # We will use the results from the first detective step
+        path = ""
+
+        # Mask the email field with asterisks
         mask = "*"
       }
     }
   }
+}
+
+# Create audience and assign the created pipeline to it
+resource "streamdal_audience" "testaud" {
+  service_name   = "test_service"
+  component_name = "kafka"
+  operation_name = "read_stuff3"
+  operation_type = "consumer"
+  pipeline_ids = [resource.streamdal_pipeline.mask_email.id]
 }

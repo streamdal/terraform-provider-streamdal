@@ -40,13 +40,6 @@ func resourcePipeline() *schema.Resource {
 				ConfigMode:  schema.SchemaConfigModeBlock,
 				Elem:        stepSchema(),
 			},
-			"audience": {
-				Description: "Audience to attach to this pipeline",
-				Type:        schema.TypeList,
-				Optional:    true,
-				ConfigMode:  schema.SchemaConfigModeBlock,
-				Elem:        audienceSchema(),
-			},
 		},
 
 		Importer: &schema.ResourceImporter{
@@ -503,7 +496,8 @@ func generateCondition(stepMap map[string]interface{}, conditionType string) (*p
 	}
 
 	if notCfg, ok := conditionCfg["notification"].([]interface{}); ok && len(notCfg) > 0 {
-		payloadTypeStr := notCfg[0].(map[string]interface{})["payload_type"].(string)
+		cfg := notCfg[0].(map[string]interface{})
+		payloadTypeStr := cfg["payload_type"].(string)
 
 		payloadType, err := notificationPayloadTypeFromString(payloadTypeStr)
 		if err != nil {
@@ -511,9 +505,9 @@ func generateCondition(stepMap map[string]interface{}, conditionType string) (*p
 		}
 
 		cond.Notification = &protos.PipelineStepNotification{
-			NotificationConfigIds: interfaceToStrings(conditionCfg["notification_config_ids"]),
+			NotificationConfigIds: interfaceToStrings(cfg["notification_config_ids"]),
 			PayloadType:           payloadType,
-			Paths:                 interfaceToStrings(conditionCfg["paths"]),
+			Paths:                 interfaceToStrings(cfg["paths"]),
 		}
 	}
 
