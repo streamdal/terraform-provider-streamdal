@@ -26,10 +26,6 @@ resource "streamdal_notification" "slack_engineering" {
   }
 }
 
-output "notification_id" {
-  value = resource.streamdal_notification.slack_engineering.id
-}
-
 # Create a pipeline with two steps
 # The first step detects email fields and the second step masks the email field
 # If no email addresses are detected in the payload, further processing is aborted
@@ -40,10 +36,10 @@ resource "streamdal_pipeline" "mask_email" {
   step {
     name = "Detect Email Field"
     on_false {
-      abort = "abort_current"
+      abort = "abort_current" # No need to continue this pipeline if no email found
     }
     on_error {
-      abort = "abort_all"
+      abort = "abort_current"
       notification {
         notification_config_ids = [resource.streamdal_notification.slack_engineering.id]
         paths                   = []
@@ -68,7 +64,7 @@ resource "streamdal_pipeline" "mask_email" {
         # We will use the results from the first detective step
         path = ""
 
-        # Mask the email field with asterisks
+        # Mask the email field(s) we find with asterisks
         mask = "*"
       }
     }
@@ -76,10 +72,10 @@ resource "streamdal_pipeline" "mask_email" {
 }
 
 # Create audience and assign the created pipeline to it
-resource "streamdal_audience" "testaud" {
-  service_name   = "test_service"
+resource "streamdal_audience" "billing_sales_report" {
+  service_name   = "billing-svc"
   component_name = "kafka"
-  operation_name = "read_stuff3"
+  operation_name = "gen-sales-report"
   operation_type = "consumer"
   pipeline_ids   = [resource.streamdal_pipeline.mask_email.id]
 }
