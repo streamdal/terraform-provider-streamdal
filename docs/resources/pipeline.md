@@ -247,11 +247,11 @@ Optional:
 <a id="nestedblock--step--on_true--notification"></a>
 ### Nested Schema for `step.on_true.notification`
 
-Optional:
+Optional block defining the notification configuration.
 
 - ``notification_config_ids`` - (List of String) Notification Config IDs
 - ``paths`` - (List of String) Paths to Extract (If Payload Type is 'select_paths')
-- ``payload_type`` - (String) Payload Type (Default: `exclude`)
+- ``payload_type`` - (Enum) What, if any of the payload to include in the notification. Possible values:  (Default: `exclude`)
 
 
 

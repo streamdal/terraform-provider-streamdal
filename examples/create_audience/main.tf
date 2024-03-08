@@ -5,8 +5,8 @@
 terraform {
   required_providers {
     streamdal = {
-      version = "0.1.0"
-      source  = "streamdal.com/tf/streamdal"
+      version = "0.1.2"
+      source  = "streamdal/streamdal"
     }
   }
 }
@@ -17,9 +17,9 @@ provider "streamdal" {
   connection_timeout = 10
 }
 
-resource "streamdal_audience" "testaud" {
-  service_name   = "test_service"
+resource "streamdal_audience" "billing_read_orders" {
+  service_name   = "billing-svc"
   component_name = "kafka"
-  operation_name = "read_stuff3"
+  operation_name = "read_orders"
   operation_type = "consumer"
 }
