@@ -8,7 +8,7 @@ description: |-
 
 # Streamdal Provider
 
-[![logo](https://github.com/streamdal/streamdal/raw/main/assets/img/streamdal-logo-light.png#gh-light-mode-only)]
+![logo](https://github.com/streamdal/streamdal/raw/main/assets/img/streamdal-logo-light.png#gh-light-mode-only)
 
 [![Discord](https://img.shields.io/badge/Community-Discord-4c57e8.svg)](https://discord.gg/streamdal)
 
