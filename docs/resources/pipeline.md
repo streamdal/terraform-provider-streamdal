@@ -84,13 +84,14 @@ Required:
 
 At lease one of the following step type blocks is required:
 
-- ``detective`` - (Block List, Max: 1) Detective Step (see [below for nested schema](#nestedblock--step--detective))
+- ``detective`` - (Block, Max: 1) Detective Step (see [below for nested schema](#nestedblock--step--detective))
 - ``dynamic`` - (Boolean) Should this step use the result from the previous step. This is valid **ONLY** for a transform step which immediately follows a detective step. Specifying `true` means
 any result from the detective step will be used as the path(s) for the transform step. (Default: `false`)
-- ``http_request`` - (Block List, Max: 1) HTTP Request Step (see [below for nested schema](#nestedblock--step--http_request))
+- ``http_request`` - (Block, Max: 1) HTTP Request Step (see [below for nested schema](#nestedblock--step--http_request))
 
-- ``schema_validation`` - (Block List, Max: 1) Schema Validation Step (see [below for nested schema](#nestedblock--step--schema_validation))
-- ``transform`` - (Block List, Max: 1) Transform Step (see [below for nested schema](#nestedblock--step--transform))
+- ``schema_validation`` - (Block, Max: 1) Schema Validation Step (see [below for nested schema](#nestedblock--step--schema_validation))
+- ``transform`` - (Block, Max: 1) Transform Step (see [below for nested schema](#nestedblock--step--transform))
+- ``valid_json`` - (Block, Max 1) Determine if the payload is valid JSON. Does not need any configuration.
 
 Optional parameters:
 
